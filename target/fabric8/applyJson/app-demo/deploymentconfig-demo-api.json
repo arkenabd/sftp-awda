@@ -1,0 +1,136 @@
+{
+  "apiVersion" : "apps.openshift.io/v1",
+  "kind" : "DeploymentConfig",
+  "metadata" : {
+    "creationTimestamp" : "2021-08-01T08:41:28Z",
+    "generation" : 1,
+    "labels" : {
+      "app" : "demo-api",
+      "group" : "org.mycompany",
+      "provider" : "fabric8",
+      "version" : "4.4.0"
+    },
+    "name" : "demo-api",
+    "namespace" : "app-demo",
+    "resourceVersion" : "23777",
+    "selfLink" : "/apis/apps.openshift.io/v1/namespaces/app-demo/deploymentconfigs/demo-api",
+    "uid" : "43252f1a-f2a4-11eb-917e-080027a6f60f"
+  },
+  "spec" : {
+    "replicas" : 1,
+    "revisionHistoryLimit" : 2,
+    "selector" : {
+      "app" : "demo-api",
+      "group" : "org.mycompany",
+      "provider" : "fabric8"
+    },
+    "strategy" : {
+      "activeDeadlineSeconds" : 21600,
+      "resources" : { },
+      "rollingParams" : {
+        "intervalSeconds" : 1,
+        "maxSurge" : "25%",
+        "maxUnavailable" : "25%",
+        "timeoutSeconds" : 3600,
+        "updatePeriodSeconds" : 1
+      },
+      "type" : "Rolling"
+    },
+    "template" : {
+      "metadata" : {
+        "labels" : {
+          "app" : "demo-api",
+          "group" : "org.mycompany",
+          "provider" : "fabric8",
+          "version" : "4.4.0"
+        }
+      },
+      "spec" : {
+        "containers" : [ {
+          "env" : [ {
+            "name" : "SPRING_APPLICATION_JSON",
+            "value" : "{\"server\":{\"tomcat\":{\"max-threads\":1}}}"
+          }, {
+            "name" : "KUBERNETES_NAMESPACE",
+            "valueFrom" : {
+              "fieldRef" : {
+                "apiVersion" : "v1",
+                "fieldPath" : "metadata.namespace"
+              }
+            }
+          } ],
+          "image" : "demo-api:4.4.0",
+          "imagePullPolicy" : "IfNotPresent",
+          "livenessProbe" : {
+            "failureThreshold" : 3,
+            "httpGet" : {
+              "path" : "/health",
+              "port" : 8081,
+              "scheme" : "HTTP"
+            },
+            "initialDelaySeconds" : 180,
+            "periodSeconds" : 10,
+            "successThreshold" : 1,
+            "timeoutSeconds" : 1
+          },
+          "name" : "spring-boot",
+          "ports" : [ {
+            "containerPort" : 8080,
+            "name" : "http",
+            "protocol" : "TCP"
+          }, {
+            "containerPort" : 9779,
+            "name" : "prometheus",
+            "protocol" : "TCP"
+          }, {
+            "containerPort" : 8778,
+            "name" : "jolokia",
+            "protocol" : "TCP"
+          } ],
+          "readinessProbe" : {
+            "failureThreshold" : 3,
+            "httpGet" : {
+              "path" : "/health",
+              "port" : 8081,
+              "scheme" : "HTTP"
+            },
+            "initialDelaySeconds" : 10,
+            "periodSeconds" : 10,
+            "successThreshold" : 1,
+            "timeoutSeconds" : 1
+          },
+          "resources" : {
+            "limits" : {
+              "cpu" : "1"
+            },
+            "requests" : {
+              "cpu" : "200m"
+            }
+          },
+          "securityContext" : {
+            "privileged" : false
+          },
+          "terminationMessagePath" : "/dev/termination-log",
+          "terminationMessagePolicy" : "File"
+        } ],
+        "dnsPolicy" : "ClusterFirst",
+        "restartPolicy" : "Always",
+        "schedulerName" : "default-scheduler",
+        "securityContext" : { },
+        "terminationGracePeriodSeconds" : 30
+      }
+    },
+    "test" : false,
+    "triggers" : [ {
+      "type" : "ConfigChange"
+    } ]
+  },
+  "status" : {
+    "availableReplicas" : 0,
+    "latestVersion" : 0,
+    "observedGeneration" : 0,
+    "replicas" : 0,
+    "unavailableReplicas" : 0,
+    "updatedReplicas" : 0
+  }
+}

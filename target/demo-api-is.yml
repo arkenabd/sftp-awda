@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    name: demo-api
+  spec:
+    tags:
+    - from:
+        kind: ImageStreamImage
+        name: demo-api@sha256:5fbf799659dde33734a420c82875ec64a540380188a6a1eb111440d28f436b26
+        namespace: app-demo
+      name: 4.4.0

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean class="org.mycompany.util.ProcessFile" id="processFile" scope="singleton"/>
+    <bean class="org.apache.camel.dataformat.zipfile.ZipSplitter" id="zipSplitter"/>
+    <camelContext id="camel" streamCache="true" xmlns="http://camel.apache.org/schema/spring">
+        <route id="_sftp">
+            <from id="_from1" uri="sftp:{{sftp.host}}:{{sftp.port}}/{{sftp.inputDir}}?delete=true&amp;password={{sftp.password}}&amp;username={{sftp.username}}"/>
+            <log id="_log1" message="Input : ${body}"/>
+            <process id="_process1" ref="processFile"/>
+            <split id="_split1" streaming="true">
+                <ref>zipSplitter</ref>
+                <toD id="_to1" uri="sftp:{{sftp.host}}:{{sftp.port}}/{{sftp.outputDir}}/${exchangeProperty.path}?password={{sftp.password}}&amp;username={{sftp.username}}"/>
+                
+            </split>
+        </route>
+    </camelContext>
+</beans>
